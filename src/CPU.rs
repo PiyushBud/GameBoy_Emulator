@@ -70,13 +70,13 @@ impl Registers{
         self.e = (value & 0xFF) as u8
     }
 
-    fn get_hi(&self) -> u16 {
-        (self.h as u16) << 8 | (self.i as u16);
+    fn get_hl(&self) -> u16 {
+        (self.h as u16) << 8 | (self.l as u16);
     }
 
-    fn set_hi(&mut self, value: u16){
+    fn set_hl(&mut self, value: u16){
         self.h = (value & 0xFF00) >> 8 as u8;
-        self.i = (value & 0xFF) as u8
+        self.l = (value & 0xFF) as u8
     }
 }
 
@@ -145,8 +145,8 @@ impl CPU {
                 match target {
                     ArithmeticTarget::BC => {
                         let value = self.registers.get_bc();
-                        let new_value = self.add(value);
-                        self.registers.a = new_value;
+                        let new_value = self.addhl(value);
+                        self.registers.set_hl(new_value);
                     }
                 }
             }
@@ -155,10 +155,16 @@ impl CPU {
 
     fn add(&mut self, value: u8) -> u8 {
         let (new_value, did_overflow) = self.registers.a.overflowing_add(value);
+
         self.registers.f.zero = new_value == 0;
         self.registers.f.subtract = false;
         self.registers.f.half_carry = (self.registers.a & 0xF) + (value & 0xF) > 0xF;
         self.registers.f.carry = did_overflow;
+        
         new_value
+    }
+
+    fn addhl(&mut self, value: u16) -> u16 {
+
     }
 }
