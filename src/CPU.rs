@@ -44,7 +44,7 @@ impl Registers{
     by combining 8 bit registers (af, bc, de, hi).
     */
     fn get_af(&self) -> u16 {
-        (self.a as u16) << 8 | (self.f as u16);
+        (self.a as u16) << 8 | (self.f as u16)
     }
 
     fn set_af(&mut self, value: u16){
@@ -53,7 +53,7 @@ impl Registers{
     }
 
     fn get_bc(&self) -> u16 {
-        (self.b as u16) << 8 | (self.c as u16);
+        (self.b as u16) << 8 | (self.c as u16)
     }
 
     fn set_bc(&mut self, value: u16){
@@ -62,7 +62,7 @@ impl Registers{
     }
 
     fn get_de(&self) -> u16 {
-        (self.d as u16) << 8 | (self.e as u16);
+        (self.d as u16) << 8 | (self.e as u16)
     }
 
     fn set_de(&mut self, value: u16){
@@ -71,7 +71,7 @@ impl Registers{
     }
 
     fn get_hl(&self) -> u16 {
-        (self.h as u16) << 8 | (self.l as u16);
+        (self.h as u16) << 8 | (self.l as u16)
     }
 
     fn set_hl(&mut self, value: u16){
@@ -138,6 +138,7 @@ impl CPU {
                         let new_value = self.add(value);
                         self.registers.a = new_value;
                     }
+                    _ => panic!("Not a valid register.")
                 }
             }
 
@@ -165,6 +166,11 @@ impl CPU {
     }
 
     fn addhl(&mut self, value: u16) -> u16 {
+        let (new_value, did_overflow) = self.registers.A.overflowing_add(value);
 
+        self.registers.f.zero = new_value == 0;
+        self.registers.f.subtract = false;
+        self.regsiters.f.half_carry = (self.register.get_hl & 0xFFF) + (value & 0xFFF) > 0xFFF;
+        self.registers.f.carry = did_overflow;
     }
 }
