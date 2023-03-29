@@ -14,6 +14,15 @@ enum Instruction {
     OR(ArithmeticTarget),
     XOR(ArithmeticTarget),
     CP(ArithmeticTarget),
+    INC(ArithmeticTarget),
+    DEC(ArithmeticTarget),
+    CCF,
+    SCF,
+    RRA(ArithmeticTarget),
+    RLA(ArithmeticTarget),
+    RRCA(ArithmeticTarget),
+    RRLA(ArithmeticTarget),
+    CPL,
 
 }
 
@@ -383,6 +392,126 @@ impl CPU {
                     _ => panic!("Not a valid register.")
                 }
             }
+
+            Instruction::INC(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a += 1;
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.b += 1;
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.c += 1;
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.d += 1;
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.e += 1;
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.h += 1;
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.l += 1;
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::DEC(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a -= 1;
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.b -= 1;
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.c -= 1;
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.d -= 1;
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.e -= 1;
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.h -= 1;
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.l -= 1;
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::CCF => {
+                !self.registers.f.carry;
+            }
+
+            Instruction::SCF => {
+                self.registers.f.carry = true;
+            }
+
+            Instruction::RRA(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a = self.rra(self.registers.a);
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.b = self.rra(self.registers.b);
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.c = self.rra(self.registers.c);
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.d = self.rra(self.registers.d);
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.e = self.rra(self.registers.e);
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.h = self.rra(self.registers.h);
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.l = self.rra(self.registers.l);
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::RLA(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a = self.rla(self.registers.a);
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.b = self.rla(self.registers.b);
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.c = self.rla(self.registers.c);
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.d = self.rla(self.registers.d);
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.e = self.rla(self.registers.e);
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.h = self.rla(self.registers.h);
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.l = self.rla(self.registers.l);
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::CPL => {
+                self.registers.a = self.registers.a ^ 0xFF;
+            }
             _ => panic!("Not a valid instruction.")
         }
     }
@@ -444,4 +573,44 @@ impl CPU {
 
         new_value + (did_overflow as u8)
     }
+
+    fn cp(&mut self, value: u8) {
+        let (new_value, did_overflow) = self.registers.a.overflowing_sub(value);
+
+        self.registers.f.zero = new_value == 0;
+        self.registers.f.subtract = true;
+        self.registers.f.half_carry = (self.registers.a & 0xF) - (value & 0xF) > 0xF;
+        self.registers.f.carry = did_overflow;
+    }
+
+    fn rra(&mut self, value: u8) -> u8 {
+        let least_bit = value & 0x1;
+        let new_value = (value >> 1) & ((self.registers.f.carry as u8) << 7);
+        self.registers.f.carry = least_bit != 0;
+
+        new_value
+    }
+
+    fn rla(&mut self, value: u8) -> u8 {
+        let most_bit = value & (0x1 << 7);
+        let new_value = (value << 1) & (self.registers.f.carry as u8);
+        self.registers.f.carry = (most_bit >> 7) != 0;
+
+        new_value
+    }
+
+    fn rrca(&mut self, value: u8) -> u8 {
+        let least_bit = value & 0x1;
+        let new_value = (value >> 1) & (least_bit << 7);
+
+        new_value
+    }
+
+    fn rrla(&mut self, value: u8) -> u8 {
+        let most_bit = value & (0x1 << 7);
+        let new_value = (value << 1) & (most_bit >> 7);
+
+        new_value
+    }
+
 }
