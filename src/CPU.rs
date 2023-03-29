@@ -10,6 +10,10 @@ enum Instruction {
     ADC(ArithmeticTarget),
     SUB(ArithmeticTarget),
     SBC(ArithmeticTarget),
+    AND(ArithmeticTarget),
+    OR(ArithmeticTarget),
+    XOR(ArithmeticTarget),
+    CP(ArithmeticTarget),
 
 }
 
@@ -296,10 +300,88 @@ impl CPU {
                         self.registers.a = new_value;
                     }
                     _ => panic!("Not a valid register.")
-
-
                 }
-                
+            }
+
+            Instruction::AND(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a = self.registers.a & self.registers.a;
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.a = self.registers.a & self.registers.b;
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.a = self.registers.a & self.registers.c;
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.a = self.registers.a & self.registers.d;
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.a = self.registers.a & self.registers.e;
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.a = self.registers.a & self.registers.h;
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.a = self.registers.a & self.registers.l;
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::OR(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a = self.registers.a | self.registers.a;
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.a = self.registers.a | self.registers.b;
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.a = self.registers.a | self.registers.c;
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.a = self.registers.a | self.registers.d;
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.a = self.registers.a | self.registers.e;
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.a = self.registers.a | self.registers.h;
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.a = self.registers.a | self.registers.l;
+                    }
+                    _ => panic!("Not a valid register.")
+                }
+            }
+
+            Instruction::XOR(target) => {
+                match target {
+                    ArithmeticTarget::A => {
+                        self.registers.a = self.registers.a ^ self.registers.a;
+                    }
+                    ArithmeticTarget::B => {
+                        self.registers.a = self.registers.a ^ self.registers.b;
+                    }
+                    ArithmeticTarget::C => {
+                        self.registers.a = self.registers.a ^ self.registers.c;
+                    }
+                    ArithmeticTarget::D => {
+                        self.registers.a = self.registers.a ^ self.registers.d;
+                    }
+                    ArithmeticTarget::E => {
+                        self.registers.a = self.registers.a ^ self.registers.e;
+                    }
+                    ArithmeticTarget::H => {
+                        self.registers.a = self.registers.a ^ self.registers.h;
+                    }
+                    ArithmeticTarget::L => {
+                        self.registers.a = self.registers.a ^ self.registers.l;
+                    }
+                    _ => panic!("Not a valid register.")
+                }
             }
             _ => panic!("Not a valid instruction.")
         }
@@ -341,7 +423,7 @@ impl CPU {
         new_value + (did_overflow as u8)
     }
 
-    fn sub(&mut self, value: u8) -> u8{
+    fn sub(&mut self, value: u8) -> u8 {
         let (new_value, did_overflow) = self.registers.a.overflowing_sub(value);
 
         self.registers.f.zero = new_value == 0;
@@ -352,7 +434,14 @@ impl CPU {
         new_value
     }
 
-    fn sbc(&mut self, value: u8) -> u8{
-        
+    fn sbc(&mut self, value: u8) -> u8 {
+        let (new_value, did_overflow) = self.registers.a.overflowing_sub(value);
+
+        self.registers.f.zero = new_value == 0;
+        self.registers.f.subtract = false;
+        self.registers.f.half_carry = (self.registers.a & 0xF) - (value & 0xF) > 0xF;
+        self.registers.f.carry = did_overflow;
+
+        new_value + (did_overflow as u8)
     }
 }
