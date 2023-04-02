@@ -321,25 +321,39 @@ impl CPU {
             Instruction::AND(target) => {
                 match target {
                     ArithmeticTarget::A => {
-                        self.registers.a = self.registers.a & self.registers.a;
+                        let value = self.registers.a;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::B => {
-                        self.registers.a = self.registers.a & self.registers.b;
+                        let value = self.registers.b;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::C => {
-                        self.registers.a = self.registers.a & self.registers.c;
+                        let value = self.registers.c;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::D => {
-                        self.registers.a = self.registers.a & self.registers.d;
+                        let value = self.registers.d;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::E => {
-                        self.registers.a = self.registers.a & self.registers.e;
+                        let value = self.registers.e;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;                    
                     }
                     ArithmeticTarget::H => {
-                        self.registers.a = self.registers.a & self.registers.h;
-                    }
+                        let value = self.registers.h;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;                   
+                     }
                     ArithmeticTarget::L => {
-                        self.registers.a = self.registers.a & self.registers.l;
+                        let value = self.registers.l;
+                        let new_value = self.and(value);
+                        self.registers.a = new_value;                  
                     }
                     _ => panic!("Not a valid register.")
                 }
@@ -348,25 +362,39 @@ impl CPU {
             Instruction::OR(target) => {
                 match target {
                     ArithmeticTarget::A => {
-                        self.registers.a = self.registers.a | self.registers.a;
+                        let value = self.registers.a;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::B => {
-                        self.registers.a = self.registers.a | self.registers.b;
+                        let value = self.registers.b;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::C => {
-                        self.registers.a = self.registers.a | self.registers.c;
+                        let value = self.registers.c;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::D => {
-                        self.registers.a = self.registers.a | self.registers.d;
+                        let value = self.registers.d;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::E => {
-                        self.registers.a = self.registers.a | self.registers.e;
+                        let value = self.registers.e;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;                    
                     }
                     ArithmeticTarget::H => {
-                        self.registers.a = self.registers.a | self.registers.h;
-                    }
+                        let value = self.registers.h;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;                   
+                     }
                     ArithmeticTarget::L => {
-                        self.registers.a = self.registers.a | self.registers.l;
+                        let value = self.registers.l;
+                        let new_value = self.or(value);
+                        self.registers.a = new_value;                  
                     }
                     _ => panic!("Not a valid register.")
                 }
@@ -375,25 +403,39 @@ impl CPU {
             Instruction::XOR(target) => {
                 match target {
                     ArithmeticTarget::A => {
-                        self.registers.a = self.registers.a ^ self.registers.a;
+                        let value = self.registers.a;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::B => {
-                        self.registers.a = self.registers.a ^ self.registers.b;
+                        let value = self.registers.b;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::C => {
-                        self.registers.a = self.registers.a ^ self.registers.c;
+                        let value = self.registers.c;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::D => {
-                        self.registers.a = self.registers.a ^ self.registers.d;
+                        let value = self.registers.d;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;
                     }
                     ArithmeticTarget::E => {
-                        self.registers.a = self.registers.a ^ self.registers.e;
+                        let value = self.registers.e;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;                    
                     }
                     ArithmeticTarget::H => {
-                        self.registers.a = self.registers.a ^ self.registers.h;
-                    }
+                        let value = self.registers.h;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;                   
+                     }
                     ArithmeticTarget::L => {
-                        self.registers.a = self.registers.a ^ self.registers.l;
+                        let value = self.registers.l;
+                        let new_value = self.xor(value);
+                        self.registers.a = new_value;                  
                     }
                     _ => panic!("Not a valid register.")
                 }
@@ -402,25 +444,25 @@ impl CPU {
             Instruction::INC(target) => {
                 match target {
                     ArithmeticTarget::A => {
-                        self.registers.a += 1;
+                        self.inc(self.registers.a);
                     }
                     ArithmeticTarget::B => {
-                        self.registers.b += 1;
+                        self.inc(self.registers.b);
                     }
                     ArithmeticTarget::C => {
-                        self.registers.c += 1;
+                        self.inc(self.registers.c);
                     }
                     ArithmeticTarget::D => {
-                        self.registers.d += 1;
+                        self.inc(self.registers.d);
                     }
                     ArithmeticTarget::E => {
-                        self.registers.e += 1;
+                        self.inc(self.registers.e);
                     }
                     ArithmeticTarget::H => {
-                        self.registers.h += 1;
+                        self.inc(self.registers.h);
                     }
                     ArithmeticTarget::L => {
-                        self.registers.l += 1;
+                        self.inc(self.registers.l);
                     }
                     _ => panic!("Not a valid register.")
                 }
@@ -429,32 +471,32 @@ impl CPU {
             Instruction::DEC(target) => {
                 match target {
                     ArithmeticTarget::A => {
-                        self.registers.a -= 1;
+                        self.dec(self.registers.a);
                     }
                     ArithmeticTarget::B => {
-                        self.registers.b -= 1;
+                        self.dec(self.registers.b);
                     }
                     ArithmeticTarget::C => {
-                        self.registers.c -= 1;
+                        self.dec(self.registers.c);
                     }
                     ArithmeticTarget::D => {
-                        self.registers.d -= 1;
+                        self.dec(self.registers.d);
                     }
                     ArithmeticTarget::E => {
-                        self.registers.e -= 1;
+                        self.dec(self.registers.e);
                     }
                     ArithmeticTarget::H => {
-                        self.registers.h -= 1;
+                        self.dec(self.registers.h);
                     }
                     ArithmeticTarget::L => {
-                        self.registers.l -= 1;
+                        self.dec(self.registers.l);
                     }
                     _ => panic!("Not a valid register.")
                 }
             }
 
             Instruction::CCF => {
-                !self.registers.f.carry;
+                self.registers.f.carry = self.registers.f.carry;
             }
 
             Instruction::SCF => {
